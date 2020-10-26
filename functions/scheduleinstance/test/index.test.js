@@ -61,7 +61,7 @@ afterEach(restoreConsole);
 
 /** Tests for startInstancePubSub */
 describe('functions_start_instance_pubsub', () => {
-  it('startInstancePubSub: should accept JSON-formatted event payload with label', async () => {
+  it('startInstancePubSub: should accept JSON-formatted event payload with label and zone', async () => {
     const mocks = getMocks();
     const sample = getSample();
     const pubsubData = {zone: 'test-zone', label: 'testkey=value'};
@@ -79,7 +79,7 @@ describe('functions_start_instance_pubsub', () => {
     assert.strictEqual(data, 'request sent');
   });
 
-  it(`startInstancePubSub: should fail with missing 'zone' attribute`, () => {
+  it(`startInstancePubSub: should accept JSON-formatted event payload with label only`, async () => {
     const mocks = getMocks();
     const sample = getSample();
     const pubsubData = {label: 'testkey=value'};
@@ -92,13 +92,12 @@ describe('functions_start_instance_pubsub', () => {
       mocks.callback
     );
 
-    assert.deepStrictEqual(
-      mocks.callback.firstCall.args[0],
-      new Error(`Attribute 'zone' missing from payload`)
-    );
+    const data = await sample.mocks.requestPromise();
+    // The request was successfully sent.
+    assert.strictEqual(data, 'request sent');
   });
 
-  it(`startInstancePubSub: should fail with missing 'label' attribute`, () => {
+  it(`startInstancePubSub: should accept JSON-formatted event payload with zone only`, async () => {
     const mocks = getMocks();
     const sample = getSample();
     const pubsubData = {zone: 'test-zone'};
@@ -111,13 +110,12 @@ describe('functions_start_instance_pubsub', () => {
       mocks.callback
     );
 
-    assert.deepStrictEqual(
-      mocks.callback.firstCall.args[0],
-      new Error(`Attribute 'label' missing from payload`)
-    );
+    const data = await sample.mocks.requestPromise();
+    // The request was successfully sent.
+    assert.strictEqual(data, 'request sent');
   });
 
-  it('startInstancePubSub: should fail with empty event payload', () => {
+  it('startInstancePubSub: should accept empty JSON-formatted event payload', async () => {
     const mocks = getMocks();
     const sample = getSample();
     const pubsubData = {};
@@ -130,16 +128,15 @@ describe('functions_start_instance_pubsub', () => {
       mocks.callback
     );
 
-    assert.deepStrictEqual(
-      mocks.callback.firstCall.args[0],
-      new Error(`Attribute 'zone' missing from payload`)
-    );
+    const data = await sample.mocks.requestPromise();
+    // The request was successfully sent.
+    assert.strictEqual(data, 'request sent');
   });
 });
 
 /** Tests for stopInstancePubSub */
 describe('functions_stop_instance_pubsub', () => {
-  it('stopInstancePubSub: should accept JSON-formatted event payload with label', async () => {
+  it('stopInstancePubSub: should accept JSON-formatted event payload with label and zone', async () => {
     const mocks = getMocks();
     const sample = getSample();
     const pubsubData = {zone: 'test-zone', label: 'testkey=value'};
@@ -157,7 +154,7 @@ describe('functions_stop_instance_pubsub', () => {
     assert.strictEqual(data, 'request sent');
   });
 
-  it(`stopInstancePubSub: should fail with missing 'zone' attribute`, () => {
+  it(`stopInstancePubSub: should accept JSON-formatted event payload with label only`, async () => {
     const mocks = getMocks();
     const sample = getSample();
     const pubsubData = {label: 'testkey=value'};
@@ -170,13 +167,12 @@ describe('functions_stop_instance_pubsub', () => {
       mocks.callback
     );
 
-    assert.deepStrictEqual(
-      mocks.callback.firstCall.args[0],
-      new Error(`Attribute 'zone' missing from payload`)
-    );
+    const data = await sample.mocks.requestPromise();
+    // The request was successfully sent.
+    assert.strictEqual(data, 'request sent');
   });
 
-  it(`stopInstancePubSub: should fail with missing 'label' attribute`, () => {
+  it(`stopInstancePubSub: should accept JSON-formatted event payload with zone only`, async () => {
     const mocks = getMocks();
     const sample = getSample();
     const pubsubData = {zone: 'test-zone'};
@@ -189,13 +185,12 @@ describe('functions_stop_instance_pubsub', () => {
       mocks.callback
     );
 
-    assert.deepStrictEqual(
-      mocks.callback.firstCall.args[0],
-      new Error(`Attribute 'label' missing from payload`)
-    );
+    const data = await sample.mocks.requestPromise();
+    // The request was successfully sent.
+    assert.strictEqual(data, 'request sent');
   });
 
-  it('stopInstancePubSub: should fail with empty event payload', () => {
+  it('stopInstancePubSub: should accept empty JSON-formatted event payload', async () => {
     const mocks = getMocks();
     const sample = getSample();
     const pubsubData = {};
@@ -208,9 +203,8 @@ describe('functions_stop_instance_pubsub', () => {
       mocks.callback
     );
 
-    assert.deepStrictEqual(
-      mocks.callback.firstCall.args[0],
-      new Error(`Attribute 'zone' missing from payload`)
-    );
+    const data = await sample.mocks.requestPromise();
+    // The request was successfully sent.
+    assert.strictEqual(data, 'request sent');
   });
 });
