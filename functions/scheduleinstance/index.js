@@ -32,22 +32,21 @@ const compute = new Compute();
  */
 exports.startInstancePubSub = async (event, context, callback) => {
   try {
-    const payload = _validatePayload(
-      JSON.parse(Buffer.from(event.data, 'base64').toString())
-    );
-    const options = {filter: `labels.${payload.label}`};
-    const [vms] = await compute.getVMs(options);
+    const payload = JSON.parse(Buffer.from(event.data, 'base64').toString());
+    const options = payload.label ? { filter: `labels.${payload.label}` } : {};
+    let [vms] = await compute.getVMs(options);
+    if (payload.zone) {
+      vms = vms.filter(instance => instance.zone.id === payload.zone);
+    }
     await Promise.all(
       vms.map(async (instance) => {
-        if (payload.zone === instance.zone.id) {
-          const [operation] = await compute
-            .zone(payload.zone)
-            .vm(instance.name)
-            .start();
+        const [operation] = await compute
+          .zone(instance.zone.id)
+          .vm(instance.name)
+          .start();
 
-          // Operation pending
-          return operation.promise();
-        }
+        // Operation pending
+        return operation.promise();
       })
     );
 
@@ -76,24 +75,21 @@ exports.startInstancePubSub = async (event, context, callback) => {
  */
 exports.stopInstancePubSub = async (event, context, callback) => {
   try {
-    const payload = _validatePayload(
-      JSON.parse(Buffer.from(event.data, 'base64').toString())
-    );
-    const options = {filter: `labels.${payload.label}`};
-    const [vms] = await compute.getVMs(options);
+    const payload = JSON.parse(Buffer.from(event.data, 'base64').toString());
+    const options = payload.label ? { filter: `labels.${payload.label}` } : {};
+    let [vms] = await compute.getVMs(options);
+    if (payload.zone) {
+      vms = vms.filter(instance => instance.zone.id === payload.zone);
+    }
     await Promise.all(
       vms.map(async (instance) => {
-        if (payload.zone === instance.zone.id) {
-          const [operation] = await compute
-            .zone(payload.zone)
-            .vm(instance.name)
-            .stop();
+        const [operation] = await compute
+          .zone(instance.zone.id)
+          .vm(instance.name)
+          .stop();
 
-          // Operation pending
-          return operation.promise();
-        } else {
-          return Promise.resolve();
-        }
+        // Operation pending
+        return operation.promise();
       })
     );
 
@@ -106,21 +102,4 @@ exports.stopInstancePubSub = async (event, context, callback) => {
     callback(err);
   }
 };
-// [START functions_start_instance_pubsub]
-
-/**
- * Validates that a request payload contains the expected fields.
- *
- * @param {!object} payload the request payload to validate.
- * @return {!object} the payload object.
- */
-const _validatePayload = (payload) => {
-  if (!payload.zone) {
-    throw new Error(`Attribute 'zone' missing from payload`);
-  } else if (!payload.label) {
-    throw new Error(`Attribute 'label' missing from payload`);
-  }
-  return payload;
-};
-// [END functions_start_instance_pubsub]
 // [END functions_stop_instance_pubsub]
